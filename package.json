@@ -1,0 +1,23 @@
+{
+  "name": "knaman",
+  "version": "1.0.0",
+  "description": "school project",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mridulgupta2906/knaman.git"
+  },
+  "author": "Mridul",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mridulgupta2906/knaman/issues"
+  },
+  "homepage": "https://github.com/mridulgupta2906/knaman#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express.js": "^1.0.0"
+  }
+}
