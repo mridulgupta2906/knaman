@@ -1,6 +1,9 @@
 const user=require('../model/model-user')
 const helper=require('../helper')
-const firebase=require('../firebase')
+const firebase=require('../firebase');
+const fs=require('fs')
+const Jimp = require("jimp");
+
 
 
 module.exports.getuserdetails=async(req,res)=>{
@@ -203,9 +206,10 @@ module.exports.updateuseryeardetails=async(req,res)=>{
 
 
 module.exports.addreportcardimage=async(req,res)=>{
-    let imgbuffer=req.body.imgbuffer;
+
+    const imgbuffer = await Buffer.from(req.body.imgbuffer, "base64");
     let scholarno=req.body.scholarno;
-    let clas=req.body.class
+    let clas=req.body.class;
     let path=`${clas}/${scholarno}`;
     try
     {

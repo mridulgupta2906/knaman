@@ -14,7 +14,7 @@ module.exports.getuserdetails=async(scholarno)=>{
         if(result.rowCount>0)
         {
             await dbutil.commit(client);
-            console.log(result.rows[0].secondrydata)
+            // console.log(result.rows[0].secondrydata)
 
             return result;
         }
@@ -196,10 +196,9 @@ module.exports.addreportcardimage=async(imgurl,scholarno,clas)=>{
             for(let i=0;i<arr.length;i++)
             {
                 let Json=arr[i];
-                if(Json.class==clas) Json.reportcardurl=imgurl;
-
-                arr[i]=Json;
-                break;
+                // console.log(Json.class," ",clas)
+                if(Json.class==clas) {Json.reportcardurl=imgurl;arr[i]=Json;}//console.log(Json)};
+                // console.log("i: ",i," arr : ",arr[i])
             }
             data2=[arr];
             let result2=await dbutil.sqlExecSingleRow(client,sqlQuery2,data2)
