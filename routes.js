@@ -8,7 +8,15 @@ router.get('/check',(req,res)=>{
 
 
 //User
-// router.post('/create',)
+router.post('/getuserdetails',user.getuserdetails)
+
+router.post('/createuserprimary',user.createuserprimary)
+router.post('/updateprimary',user.updateprimary)
+
+router.post('/createusersecondary',user.createusersecondary)
+router.post('/updateuseryeardetails',user.updateuseryeardetails)
+router.post('/addreportcardimage',user.addreportcardimage)
+router.post('/removesecondrydata',user.removesecondrydata)
 
 
 
