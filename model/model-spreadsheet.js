@@ -39,7 +39,11 @@ module.exports.getspreadsheeturl=async(result,sheetname,googlespreadsheeturl)=>{
         const insert =await sheet.addRows(result.rows).then((x)=>{
             rownumber=x['_rowNumber'];
         });
-    let spreadsheeturl=`https://docs.google.com/spreadsheets/d/${googlespreadsheeturl}/edit#gid`;
-    // if(rownumber)
-    return spreadsheeturl;
+    const prevsheet=doc.sheetsByIndex[0];
+    if(prevsheet.title==title) await prevsheet.delete();
+    let url={
+        viewspreadsheeturl:`https://docs.google.com/spreadsheets/d/${googlespreadsheeturl}/edit#gid`,
+        downloadspreadsheeturl:`https://docs.google.com/spreadsheets/d/${googlespreadsheeturl}/export?format=xlsx`
+    }
+    return url;
 }

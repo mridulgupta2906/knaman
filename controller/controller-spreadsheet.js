@@ -29,10 +29,10 @@ module.exports.getspreadsheeturl=async(req,res)=>{
     let result=await spreadsheet.getspreadsheetdata(clas,year,finalstr);
     if(result.rows.length>0)
     {
-        let spreadsheeturl=await spreadsheet.getspreadsheeturl(result,sheetname,googlespreadsheeturl);
-        if(spreadsheeturl!=null)
+        let spreadsheeturlJson=await spreadsheet.getspreadsheeturl(result,sheetname,googlespreadsheeturl);
+        if(spreadsheeturlJson!=null)
         {
-            return spreadsheeturl;
+            return spreadsheeturlJson;
         }
     }
 
