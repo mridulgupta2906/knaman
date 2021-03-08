@@ -40,11 +40,11 @@ module.exports.getspreadsheeturl=async(result,sheetname,googlespreadsheeturl)=>{
             rownumber=x['_rowNumber'];
         });
     const prevsheet=doc.sheetsByIndex[0];
-    if(prevsheet.title==title) await prevsheet.delete();
+    if(prevsheet.title!=title) await prevsheet.delete();
     let url={
         viewspreadsheeturl:`https://docs.google.com/spreadsheets/d/${googlespreadsheeturl}/edit#gid`,
         downloadspreadsheeturl:`https://docs.google.com/spreadsheets/d/${googlespreadsheeturl}/export?format=xlsx`
     }
-    
+
     return url;
 }

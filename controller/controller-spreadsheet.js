@@ -32,7 +32,21 @@ module.exports.getspreadsheeturl=async(req,res)=>{
         let spreadsheeturlJson=await spreadsheet.getspreadsheeturl(result,sheetname,googlespreadsheeturl);
         if(spreadsheeturlJson!=null)
         {
-            return spreadsheeturlJson;
+            return res.status(200).json({
+                status:"success",
+                statusCode:200,
+                message:"user created",
+                data:spreadsheeturlJson
+            })
+        }
+        else
+        {
+             return res.status(200).json({
+                status:"error",
+                statusCode:400,
+                message:"user not created",
+                data:[]
+            })
         }
     }
 
