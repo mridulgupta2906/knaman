@@ -127,6 +127,7 @@ module.exports.createusersecondary=async(req,res)=>{
     try
     {
         let scholarno=req.body.scholarno;
+        let clas=req.body.class;
         let Json={
             year:'',
             class:'',
@@ -138,7 +139,7 @@ module.exports.createusersecondary=async(req,res)=>{
         Json.class=req.body.class
         Json.rollno=req.body.rollno
         Json.percentage=req.body.percentage
-        const result=await user.createusersecondary(Json,scholarno);
+        const result=await user.createusersecondary(Json,scholarno,clas);
         if(result.rowCount>0)
         {
             return res.status(200).json({
@@ -210,7 +211,7 @@ module.exports.addreportcardimage=async(req,res)=>{
     const imgbuffer = await Buffer.from(req.body.imgbuffer, "base64");
     let scholarno=req.body.scholarno;
     let clas=req.body.class;
-    let path=`${clas}/${scholarno}`;
+    let path=`class_${clas}/scholarno_${scholarno}`;
     try
     {
         let imgurl=await firebase.uploadToFirebase(path,imgbuffer)

@@ -1,5 +1,6 @@
 const router=require('express').Router();
 const user=require('./controller/controller-user')
+const spreadsheet=require('./controller/controller-spreadsheet')
 
 //check
 router.get('/check',(req,res)=>{
@@ -19,5 +20,7 @@ router.post('/addreportcardimage',user.addreportcardimage)
 router.post('/removesecondrydata',user.removesecondrydata)
 
 
+// google spreadsheet approach
+router.post('/spreadsheetlink',spreadsheet.getspreadsheeturl)
 
 module.exports=router;
