@@ -33,6 +33,7 @@ router.post('/login',user.logincheck)
 router.post('/passwordupdate',user.passwordupdate)
 
 // google spreadsheet approach
-router.post('/spreadsheetlink',spreadsheet.getspreadsheeturl)
+router.post('/getstudentsspreadsheeturl',spreadsheet.getstudentsspreadsheeturl)
+router.post('/getteachersspreadsheeturl',spreadsheet.getteachersspreadsheeturl)
 
 module.exports=router;

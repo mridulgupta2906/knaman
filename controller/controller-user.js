@@ -9,8 +9,9 @@ const Jimp = require("jimp");
 module.exports.getuserdetails=async(req,res)=>{
     let scholarno=req.body.scholarno;
     let roletocheck=req.body.roletocheck;
-    if(roletocheck!='master' || roletocheck!='headmaster')
-    {
+    console.log(roletocheck)
+    if(roletocheck!='master' && roletocheck!='headmaster')
+    { console.log("here")
         return res.status(200).json({
             status:"error",
             statusCode:400,
@@ -54,7 +55,7 @@ module.exports.createuserprimary=async(req,res)=>{
         let key=Object.keys(req.body);
         let value=Object.values(req.body);
         let roletocheck=req.body.roletocheck;
-        if(roletocheck!='master' || roletocheck!='headmaster')
+        if(roletocheck!='master' && roletocheck!='headmaster')
         {
             return res.status(200).json({
                 status:"error",
@@ -112,7 +113,7 @@ module.exports.updateprimary=async(req,res)=>{
         let roletocheck=req.body.roletocheck;
         let userid=req.body.userid;
         let str='';
-        if(roletocheck!='master' || roletocheck!='headmaster')
+        if(roletocheck!='master' && roletocheck!='headmaster')
         {
             return res.status(200).json({
                 status:"error",
@@ -175,7 +176,7 @@ module.exports.createusersecondary=async(req,res)=>{
         Json.class=req.body.class
         Json.rollno=req.body.rollno
         Json.percentage=req.body.percentage
-        if(roletocheck!='master' || roletocheck!='headmaster')
+        if(roletocheck!='master' && roletocheck!='headmaster')
         {
             return res.status(200).json({
                 status:"error",
@@ -226,7 +227,7 @@ module.exports.createusersecondaryforteacher=async(req,res)=>{
         Json.year=req.body.year
         Json.adminofclass=req.body.adminofclass
         Json.classes=req.body.classes
-        if(roletocheck!='master' || roletocheck!='headmaster')
+        if(roletocheck!='master' && roletocheck!='headmaster')
         {
             return res.status(200).json({
                 status:"error",
@@ -274,7 +275,7 @@ module.exports.updateuseryeardetails=async(req,res)=>{
         let percentage=req.body.percentage;
         let rollno=req.body.rollno;
         let year=req.body.year;
-        if(roletocheck!='master' || roletocheck!='headmaster')
+        if(roletocheck!='master' && roletocheck!='headmaster')
         {
             return res.status(200).json({
                 status:"error",
@@ -318,7 +319,7 @@ module.exports.updateteacheryeardetails=async(req,res)=>{
         let year=req.body.year;
         let classes=req.body.classes
         let adminofclass=req.body.adminofclass;
-        if(roletocheck!='master' || roletocheck!='headmaster')
+        if(roletocheck!='master' && roletocheck!='headmaster')
         {
             return res.status(200).json({
                 status:"error",
@@ -362,7 +363,7 @@ module.exports.addreportcardimage=async(req,res)=>{
     let scholarno=req.body.scholarno;
     let clas=req.body.class;
     let roletocheck=req.body.roletocheck;
-    if(roletocheck!='master' || roletocheck!='headmaster')
+    if(roletocheck!='master' && roletocheck!='headmaster')
     {
             return res.status(200).json({
                 status:"error",
@@ -408,7 +409,7 @@ module.exports.removesecondrydataofstudent=async(req,res)=>{
         let scholarno=req.body.scholarno;
         let clas=req.body.class;
         let roletocheck=req.body.roletocheck;
-        if(roletocheck!='master' || roletocheck!='headmaster')
+        if(roletocheck!='master' && roletocheck!='headmaster')
         {
             return res.status(200).json({
                 status:"error",
@@ -451,7 +452,7 @@ module.exports.removesecondrydataofteacher=async(req,res)=>{
         let scholarno=req.body.scholarno;
         let year=req.body.year;
         let roletocheck=req.body.roletocheck;
-        if(roletocheck!='master' || roletocheck!='headmaster')
+        if(roletocheck!='master' && roletocheck!='headmaster')
         {
             return res.status(200).json({
                 status:"error",
@@ -501,7 +502,7 @@ module.exports.viewpersonalinfo=async(req,res)=>{
             return res.status(200).json({
                 status:"success",
                 statusCode:200,
-                message:"deleted",
+                message:"info got",
                 data:result.rows
             })
         }
@@ -510,7 +511,7 @@ module.exports.viewpersonalinfo=async(req,res)=>{
             return res.status(200).json({
                 status:"error",
                 statusCode:400,
-                message:"not deleted",
+                message:"no info",
                 data:[]
             })
         }

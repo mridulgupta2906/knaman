@@ -3,10 +3,10 @@ const { Pool } = require('pg');
 const logger = require('./logger');
 
 const pgconfig = {
-    user: "lsnwmeimfhqjrn",
-    database: "d7q1je1ig7edgp",
-    password: "5d7093f6edd189f26d8901d6750e0467f70aba8e46e811c5ebba9ed1e97ce14c",
-    host: "ec2-54-159-175-113.compute-1.amazonaws.com",
+    user: "postgres",
+    database: "knaman",
+    password: "admin",
+    host: "localhost",
     port: 5432,
     // max: config.db.max,
     // ssl: config.db.ssl,

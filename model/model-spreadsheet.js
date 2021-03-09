@@ -2,8 +2,8 @@ const dbutil=require('../dbUtil')
 const { GoogleSpreadsheet } = require('google-spreadsheet');
 
 
-module.exports.getspreadsheetdata=async(clas,year,finalstr)=>{
-    let sqlQuery=`select ${finalstr} from "user" where secondrydata->'${clas}'->>'class'=$1 and secondrydata->'${clas}'->>'year'=$2`;
+module.exports.getstudentspreadsheetdata=async(clas,year,finalstr)=>{
+    let sqlQuery=`select ${finalstr} from "user" where role='student' and secondrydata->'${clas}'->>'class'=$1 and secondrydata->'${clas}'->>'year'=$2`;
     let data=[clas,year];
     console.log("sqlQuery : ",sqlQuery)
     let client =await dbutil.getTransaction();
@@ -27,7 +27,7 @@ module.exports.getspreadsheetdata=async(clas,year,finalstr)=>{
 module.exports.getspreadsheeturl=async(result,sheetname,googlespreadsheeturl)=>{
     let colname=Object.keys(result.rows[0]);
     let title=sheetname;
-    console.log("colname : ",colname)
+    // console.log("colname : ",colname)
     
     const doc= new GoogleSpreadsheet(`${googlespreadsheeturl}`);
     await doc.useServiceAccountAuth({
@@ -48,3 +48,27 @@ module.exports.getspreadsheeturl=async(result,sheetname,googlespreadsheeturl)=>{
 
     return url;
 }
+
+
+
+module.exports.getteacherspreadsheetdata=async(year,finalstr)=>{
+    let sqlQuery=`select ${finalstr} from "user" where role='master' and secondrydata->'${year}'->>'year'=$1`;
+    let data=[year];
+    console.log("sqlQuery : ",sqlQuery)
+    let client =await dbutil.getTransaction();
+    try
+    {
+        let result1=await dbutil.sqlExecSingleRow(client,sqlQuery,data)
+        if(result1.rowCount>0)
+        {
+            await dbutil.commit(client);
+            return result1;
+        }
+    }
+    catch(error)
+    {
+        console.log("model spreadsheet ---> getstudentspreadsheetdata() error : ",error)
+        await dbutil.rollback(client)
+    }
+}
+

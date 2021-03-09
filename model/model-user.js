@@ -16,8 +16,8 @@ module.exports.getuserdetails=async(scholarno)=>{
             await dbutil.commit(client);
             // console.log(result.rows[0].secondrydata)
 
-            return result;
         }
+        return result;
     }
     catch(error)
     {
@@ -41,12 +41,12 @@ module.exports.createuserprimary=async(colname,coldata)=>{
         if(result.rowCount>0)
         {
             await dbutil.commit(client);
-            return result;
         } 
         else
         {
             await dbutil.rollback(client)
         }
+        return result;
     }
     catch(error)
     {
@@ -69,12 +69,12 @@ module.exports.updateprimary=async(userid,newstr)=>{
         if(result.rowCount>0)
         {
             await dbutil.commit(client);
-            return result;
         }
         else
         {
             await dbutil.rollback(client);
         }
+        return result;
     }
     catch(error)
     {
@@ -296,13 +296,14 @@ module.exports.createusersecondary=async(Json,scholarno,clas)=>{
                 if(result2.rowCount>0)
                 {
                     await dbutil.commit(client);
-                    return result2;
                 }//if result2
                 else
                 {
                     await dbutil.rollback(client);
                 }//else result2
+                return result2;
             }//if result1
+            return result1;
        }
        catch(error)
        {
@@ -342,14 +343,16 @@ module.exports.createusersecondaryforteacher=async(Json,scholarno,year)=>{
                 if(result2.rowCount>0)
                 {
                     await dbutil.commit(client);
-                    return result2;
                 }//if result2
                 else
                 {
                     await dbutil.rollback(client);
                 }//else result2
+                return result2;
             }//if result1
-       }
+            return result1;
+
+        }
        catch(error)
        {
         console.log("model-user --> createuser()  catch error || error :",error.message);
@@ -383,13 +386,14 @@ module.exports.updateuseryeardetails=async(scholarno,clas,year,rollno,percentage
                 if(result2.rowCount>0)
                 {
                     await dbutil.commit(client);
-                    return result2;
                 }
                 else
                 {
                     await dbutil.rollback(client);
                 }
+                return result2;
             }
+            return result;
         }
         catch(error)
         {
@@ -421,13 +425,14 @@ module.exports.updateteacheryeardetails=async(scholarno,year,classes,adminofclas
             if(result2.rowCount>0)
             {
                 await dbutil.commit(client);
-                return result2;
             }
             else
             {
                 await dbutil.rollback(client);
             }
+            return result2;
         }
+        return result;
     }
     catch(error)
     {
@@ -456,19 +461,19 @@ module.exports.addreportcardimage=async(imgurl,scholarno,clas)=>{
                 {
                     Jsongot[clas].reportcardurl=imgurl;
                 }
-            data2=[Jsongot];
-            let result2=await dbutil.sqlExecSingleRow(client,sqlQuery2,data2)
-            if(result2.rowCount>0)
-            {
-                await dbutil.commit(client)
+                data2=[Jsongot];
+                let result2=await dbutil.sqlExecSingleRow(client,sqlQuery2,data2)
+                if(result2.rowCount>0)
+                {
+                    await dbutil.commit(client)
+                }
+                else
+                {
+                    await dbutil.rollback(client);
+                }
                 return result2;
             }
-            else
-            {
-                await dbutil.rollback(client);
-            }
-
-            }
+            return result;
         }
         catch(error)
         {
@@ -495,13 +500,14 @@ module.exports.removesecondrydataofstudent=async(scholarno,clas)=>{
                 if(result2.rowCount>0)
                 {
                     await dbutil.commit(client);
-                    return result2;
                 }
                 else
                 {
                     await dbutil.rollback(client);
                 }
+                return result2;
             }
+            return result;
         }
         catch(error)
         {
@@ -529,13 +535,14 @@ module.exports.removesecondrydataofteacher=async(scholarno,year)=>{
             if(result2.rowCount>0)
             {
                 await dbutil.commit(client);
-                return result2;
             }
             else
             {
                 await dbutil.rollback(client);
             }
+            return result2;
         }
+        return result;
     }
     catch(error)
     {
@@ -560,8 +567,8 @@ module.exports.viewpersonalinfo=async(scholarno)=>{
         if(result.rowCount>0)
         {
             await dbutil.commit(client);
-            return result;
         }
+        return result;
     }
     catch(error)
     {
@@ -583,8 +590,8 @@ module.exports.logincheck=async(scholarno,password,role)=>{
         if(result.rowCount>0)
         {
             await dbutil.commit(client);
-            return result;
         }
+        return result;
     }
     catch(error)
     {
@@ -611,8 +618,8 @@ module.exports.passwordupdate=async(scholarno,oldpassword,newpassword,role)=>{
             if(result2.rowCount>0)
             {
                 await dbutil.commit(client);
-                return result2;
             }
+            return result2;
         }
         else
         {
