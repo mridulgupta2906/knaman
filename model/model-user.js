@@ -312,6 +312,55 @@ module.exports.createusersecondary=async(Json,scholarno,clas)=>{
 }
 
 
+
+module.exports.createusersecondaryforteacher=async(Json,scholarno,year)=>{
+    let sqlQuery=`select secondrydata from "user" where scholarno='${scholarno}'`;
+        let data=[];
+        let sqlQuery2=`update "user" set secondrydata=$1 where scholarno='${scholarno}'`;
+        let data2=[];
+        let client=await dbutil.getTransaction();
+        try
+       {
+            let result1=await dbutil.sqlExecSingleRow(client,sqlQuery,data);
+            if(result1.rowCount>0)
+            {
+                let Jsongot=result1.rows[0].secondrydata;
+                if(Jsongot!=null)
+                {
+                    Jsongot[year]=Json;
+                    // console.log(Jsongot)
+                }//if Jsongot! null
+                else
+                {
+                    let whenJsonnull={
+                        [year]:Json
+                    };
+                    Jsongot=whenJsonnull;
+                }
+                data2=[Jsongot];
+                let result2=await dbutil.sqlExecSingleRow(client,sqlQuery2,data2);
+                if(result2.rowCount>0)
+                {
+                    await dbutil.commit(client);
+                    return result2;
+                }//if result2
+                else
+                {
+                    await dbutil.rollback(client);
+                }//else result2
+            }//if result1
+       }
+       catch(error)
+       {
+        console.log("model-user --> createuser()  catch error || error :",error.message);
+                await dbutil.rollback(client);
+       }
+}
+
+
+
+
+
 module.exports.updateuseryeardetails=async(scholarno,clas,year,rollno,percentage)=>{
         let sqlQuery=`select secondrydata from "user" where scholarno='${scholarno}'`;
         let data=[];
@@ -350,8 +399,49 @@ module.exports.updateuseryeardetails=async(scholarno,clas,year,rollno,percentage
 }
 
 
+
+module.exports.updateteacheryeardetails=async(scholarno,year,classes,adminofclass)=>{
+    let sqlQuery=`select secondrydata from "user" where scholarno='${scholarno}'`;
+    let data=[];
+    let sqlQuery2=`update "user" set secondrydata=$1 where scholarno='${scholarno}'`;
+    let client=await dbutil.getTransaction();
+    try
+    {
+        let result=await dbutil.sqlExecSingleRow(client,sqlQuery,data)
+        if(result.rowCount>0)
+        {        
+            let Jsongot=result.rows[0].secondrydata;
+            if(Jsongot[year]!=null)
+            {
+                if(classes!='null') Jsongot[year].classes=classes;
+                if(adminofclass!='null') Jsongot[year].adminofclass=adminofclass;
+            }
+            data2=[Jsongot];
+            let result2=await dbutil.sqlExecSingleRow(client,sqlQuery2,data2);
+            if(result2.rowCount>0)
+            {
+                await dbutil.commit(client);
+                return result2;
+            }
+            else
+            {
+                await dbutil.rollback(client);
+            }
+        }
+    }
+    catch(error)
+    {
+        console.log("user model --> updateteacheryeardetails() error : ",error);
+        await dbutil.rollback(client);
+    }
+}
+
+
+
+
+
 module.exports.addreportcardimage=async(imgurl,scholarno,clas)=>{
-        let sqlQuery=`select secondrydata from "user" where scholarno='${scholarno}'`;
+        let sqlQuery=`select secondrydata from "user" where scholarno='${scholarno}' and role='student'`;
         let data=[];
         let sqlQuery2=`update "user" set secondrydata=$1 where scholarno='${scholarno}'`;
         let data2=[];
@@ -387,7 +477,7 @@ module.exports.addreportcardimage=async(imgurl,scholarno,clas)=>{
         }
 }          
 
-module.exports.removesecondrydata=async(scholarno,clas)=>{
+module.exports.removesecondrydataofstudent=async(scholarno,clas)=>{
         let sqlQuery=`select secondrydata from "user" where scholarno='${scholarno}'`;
         let data=[];
         let sqlQuery2=`update "user" set secondrydata=$1 where scholarno='${scholarno}'`;
@@ -415,7 +505,124 @@ module.exports.removesecondrydata=async(scholarno,clas)=>{
         }
         catch(error)
         {
-            console.log(" user model --> removesecondrydata() error : ",error)
+            console.log(" user model --> removesecondrydataofstudents() error : ",error)
             await dbutil.rollback(client)
         }
+}
+
+
+module.exports.removesecondrydataofteacher=async(scholarno,year)=>{
+    let sqlQuery=`select secondrydata from "user" where scholarno='${scholarno}' and role='master'`;
+    let data=[];
+    let sqlQuery2=`update "user" set secondrydata=$1 where scholarno='${scholarno}'`;
+    let data2=[];
+    let client=await dbutil.getTransaction();
+    try
+    {
+        let result=await dbutil.sqlExecSingleRow(client,sqlQuery,data)
+        if(result.rowCount>0)
+        {
+            let Jsongot=result.rows[0].secondrydata;
+            if(Jsongot[year]!=null) delete Jsongot[year];
+            data2=[Jsongot];
+            let result2=await dbutil.sqlExecSingleRow(client,sqlQuery2,data2);
+            if(result2.rowCount>0)
+            {
+                await dbutil.commit(client);
+                return result2;
+            }
+            else
+            {
+                await dbutil.rollback(client);
+            }
+        }
+    }
+    catch(error)
+    {
+        console.log(" user model --> removesecondrydataofteacher() error : ",error)
+        await dbutil.rollback(client)
+    }
+}
+
+
+
+
+
+
+
+module.exports.viewpersonalinfo=async(scholarno)=>{
+    let sqlQuery=`select * from "user" where scholarno='${scholarno}'`;
+    let data=[];
+    let client=await dbutil.getTransaction();
+    try
+    {
+        let result=await dbutil.sqlExecSingleRow(client,sqlQuery,data)
+        if(result.rowCount>0)
+        {
+            await dbutil.commit(client);
+            return result;
+        }
+    }
+    catch(error)
+    {
+        console.log("model-user --> viewpersonalinfo()  catch error || error :",error.message);
+        await dbutil.rollback(client);
+    }
+}
+
+
+
+
+module.exports.logincheck=async(scholarno,password,role)=>{
+    let sqlQuery=`select * from "user" where scholarno='${scholarno}' and password='${password}' and role='${role}'`;
+    let data=[];
+    let client=await dbutil.getTransaction();
+    try
+    {
+        let result=await dbutil.sqlExecSingleRow(client,sqlQuery,data)
+        if(result.rowCount>0)
+        {
+            await dbutil.commit(client);
+            return result;
+        }
+    }
+    catch(error)
+    {
+        console.log("model-user --> viewpersonalinfo()  catch error || error :",error.message);
+        await dbutil.rollback(client);
+    }
+}
+
+
+
+module.exports.passwordupdate=async(scholarno,oldpassword,newpassword,role)=>{
+    let sqlQuery=`select scholarno from "user" where scholarno='${scholarno}' and password='${oldpassword}' and role='${role}'`;
+    let data=[];
+    let sqlQuery2=`update "user" set password='${newpassword}' where scholarno='${scholarno}'`;
+    let data2=[];
+
+    let client=await dbutil.getTransaction();
+    try
+    {
+        let result1=await dbutil.sqlExecSingleRow(client,sqlQuery,data)
+        if(result1.rowCount>0)
+        {
+            let result2=await dbutil.sqlExecSingleRow(client,sqlQuery2,data2)
+            if(result2.rowCount>0)
+            {
+                await dbutil.commit(client);
+                return result2;
+            }
+        }
+        else
+        {
+            await dbutil.rollback(client);
+            return result1;
+        }
+    }
+    catch(error)
+    {
+        console.log("model-user --> passwordupdate()  catch error || error :",error.message);
+        await dbutil.rollback(client);
+    }
 }

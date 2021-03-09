@@ -5,6 +5,16 @@ const { GoogleSpreadsheet } = require('google-spreadsheet');
 
 module.exports.getspreadsheeturl=async(req,res)=>{
     
+    let roletocheck=req.body.roletocheck;
+    if(roletocheck!='master' || roletocheck!='headmaster')
+        {
+            return res.status(200).json({
+                status:"error",
+                statusCode:400,
+                message:"user role not authorised",
+                data:[]
+            })
+        }
     let clas=req.body.class;
     let year=req.body.year;
     let sheetname=req.body.sheetname;
@@ -18,7 +28,7 @@ module.exports.getspreadsheeturl=async(req,res)=>{
         {
             primedata=primedata+`secondrydata->'${clas}'->>'${key[i]}' as ${key[i]},`
         }
-        else if(key[i]!='sheetname' && key[i]!='googlespreadsheeturl')
+        else if(key[i]!='sheetname' && key[i]!='googlespreadsheeturl' && key[i]!='roletocheck')
         {
             secdata=secdata+`${key[i]},`;
         }

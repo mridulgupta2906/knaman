@@ -15,10 +15,22 @@ router.post('/createuserprimary',user.createuserprimary)
 router.post('/updateprimary',user.updateprimary)
 
 router.post('/createusersecondary',user.createusersecondary)
-router.post('/updateuseryeardetails',user.updateuseryeardetails)
-router.post('/addreportcardimage',user.addreportcardimage)
-router.post('/removesecondrydata',user.removesecondrydata)
+router.post('/createusersecondryforteacher',user.createusersecondaryforteacher)
 
+router.post('/updateuseryeardetails',user.updateuseryeardetails)
+router.post('/updateteacheryeardetails',user.updateteacheryeardetails)
+
+router.post('/addreportcardimage',user.addreportcardimage)
+
+router.post('/removesecondrydataofstudent',user.removesecondrydataofstudent)
+router.post('/removesecondrydataofteacher',user.removesecondrydataofteacher)
+
+
+router.post('/viewpersonalinfo',user.viewpersonalinfo) // does not require roletocheck
+
+router.post('/login',user.logincheck)
+
+router.post('/passwordupdate',user.passwordupdate)
 
 // google spreadsheet approach
 router.post('/spreadsheetlink',spreadsheet.getspreadsheeturl)
