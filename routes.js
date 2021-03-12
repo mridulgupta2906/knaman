@@ -18,6 +18,7 @@ router.post('/createusersecondary',user.createusersecondary)
 router.post('/createusersecondryforteacher',user.createusersecondaryforteacher)
 
 router.post('/updateuseryeardetails',user.updateuseryeardetails)
+router.post('/addpreviousorgdoc',user.addpreviousorgdoc)
 router.post('/updateteacheryeardetails',user.updateteacheryeardetails)
 
 router.post('/addreportcardimage',user.addreportcardimage)

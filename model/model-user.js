@@ -633,3 +633,29 @@ module.exports.passwordupdate=async(scholarno,oldpassword,newpassword,role)=>{
         await dbutil.rollback(client);
     }
 }
+
+
+module.exports.addpreviousorgdoc=async(imgurl,scholarno)=>{
+    let sqlQuery=`update "user" set previousORGdoc='${imgurl}' where scholarno='${scholarno}'`;
+    let data=[];
+    let client=await dbutil.getTransaction();
+    try
+    {
+        let result=await dbutil.sqlExecSingleRow(client,sqlQuery,data)
+        if(result.rowCount>0)
+        {
+            await dbutil.commit(client);
+
+        }
+        else
+        {
+            await dbutil.rollback(client);
+        }
+        return result;
+    }
+    catch(error)
+    {
+        console.log("model-user --> addpreviousorgdoc()  catch error || error :",error.message);
+        await dbutil.rollback(client);
+    }
+}

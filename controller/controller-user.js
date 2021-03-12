@@ -592,3 +592,49 @@ module.exports.passwordupdate=async(req,res)=>{
 
     }
 }
+
+
+
+module.exports.addpreviousorgdoc=async(req,res)=>{
+
+        const imgbuffer = await Buffer.from(req.body.imgbuffer, "base64");
+        let scholarno=req.body.scholarno;
+        let roletocheck=req.body.roletocheck;
+        if(roletocheck!='master' && roletocheck!='headmaster')
+        {
+                return res.status(200).json({
+                    status:"error",
+                    statusCode:400,
+                    message:"user role not authorised",
+                    data:[]
+                })
+        }
+        let path=`previousORGdoc/scholarno_${scholarno}`;
+        try
+        {
+            let imgurl=await firebase.uploadToFirebase(path,imgbuffer)
+            let result =await user.addpreviousorgdoc(imgurl,scholarno);
+            if(result.rowCount>0)
+            {
+                return res.status(200).json({
+                    status:"success",
+                    statusCode:200,
+                    message:"previousorgdoc url generated",
+                    data:result.rows
+                })
+            }
+            else
+            {
+                return res.status(200).json({
+                    status:"error",
+                    statusCode:400,
+                    message:"url not generated",
+                    data:[]
+                })
+            }
+        }
+        catch(error)
+        {
+            console.log("contorller user --> addpreviousorgdoc() error : ",error);
+        }
+}
