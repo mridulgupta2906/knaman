@@ -581,7 +581,7 @@ module.exports.viewpersonalinfo=async(scholarno)=>{
 
 
 module.exports.logincheck=async(scholarno,password,role)=>{
-    let sqlQuery=`select * from "user" where scholarno='${scholarno}' and password='${password}' and role='${role}'`;
+    let sqlQuery=`select * from "user" where scholarno='${scholarno}' and password='${password}'`;
     let data=[];
     let client=await dbutil.getTransaction();
     try

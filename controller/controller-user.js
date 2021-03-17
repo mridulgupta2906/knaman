@@ -19,32 +19,32 @@ module.exports.getuserdetails=async(req,res)=>{
             data:[]
         })
     }
-    try
-    {
-        let result=await user.getuserdetails(scholarno);
-        if(result.rowCount>0)
-        {
-            return res.status(200).json({
-                status:"success",
-                statusCode:200,
-                message:"user details",
-                data:result.rows
-            })
-        }
-        else
-        {
-            return res.status(200).json({
-                status:"error",
-                statusCode:400,
-                message:"details not found",
-                data:[]
-            })
-        }
-    }
-    catch(error)
-    {
-        console.log("user controller --> getuserdetails()  error : ",error)
-    }
+    // try
+    // {
+    //     let result=await user.getuserdetails(scholarno);
+    //     if(result.rowCount>0)
+    //     {
+    //         return res.status(200).json({
+    //             status:"success",
+    //             statusCode:200,
+    //             message:"user details",
+    //             data:result.rows
+    //         })
+    //     }
+    //     else
+    //     {
+    //         return res.status(200).json({
+    //             status:"error",
+    //             statusCode:400,
+    //             message:"details not found",
+    //             data:[]
+    //         })
+    //     }
+    // }
+    // catch(error)
+    // {
+    //     console.log("user controller --> getuserdetails()  error : ",error)
+    // }
 }
 
 
@@ -529,15 +529,14 @@ module.exports.logincheck=async(req,res)=>{
     try
     {
         let scholarno=req.body.scholarno;
-        let role=req.body.role;
         let password=req.body.password;
-        let result=await user.logincheck(scholarno,password,role);
+        let result=await user.logincheck(scholarno,password);
         if(result.rowCount>0)
         {
             return res.status(200).json({
                 status:"success",
                 statusCode:200,
-                message:"deleted",
+                message:"success",
                 data:result.rows
             })
         }
@@ -546,7 +545,7 @@ module.exports.logincheck=async(req,res)=>{
             return res.status(200).json({
                 status:"error",
                 statusCode:400,
-                message:"not deleted",
+                message:"unauthorised",
                 data:[]
             })
         }
