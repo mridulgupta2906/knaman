@@ -1,5 +1,7 @@
 const user=require('./model-user')
-const dbutil=require('../dbUtil')
+const dbutil=require('../dbUtil');
+
+
 
 
 
@@ -658,4 +660,251 @@ module.exports.addpreviousorgdoc=async(imgurl,scholarno)=>{
         console.log("model-user --> addpreviousorgdoc()  catch error || error :",error.message);
         await dbutil.rollback(client);
     }
+}
+
+
+
+module.exports.createstudentcashflow=async(Json,scholarno,clas)=>{
+    let sqlQuery=`select cashflow from "user" where scholarno='${scholarno}' and role='student'`;
+        let data=[];
+        let sqlQuery2=`update "user" set cashflow=$1 where scholarno='${scholarno}'`;
+        let data2=[];
+        let client=await dbutil.getTransaction();
+        try
+       {
+            let result1=await dbutil.sqlExecSingleRow(client,sqlQuery,data);
+            if(result1.rowCount>0)
+            {
+                let Jsongot=result1.rows[0].cashflow;
+                if(Jsongot!=null)
+                {
+                    Jsongot[clas]=Json;
+                    // console.log(Jsongot)
+                }//if Jsongot! null
+                else
+                {
+                    let whenJsonnull={
+                        [clas]:Json
+                    };
+                    Jsongot=whenJsonnull;
+                }
+                data2=[Jsongot];
+                let result2=await dbutil.sqlExecSingleRow(client,sqlQuery2,data2);
+                if(result2.rowCount>0)
+                {
+                    await dbutil.commit(client);
+                }//if result2
+                else
+                {
+                    await dbutil.rollback(client);
+                }//else result2
+                return result2;
+            }//if result1
+            return result1;
+
+        }
+       catch(error)
+       {
+        console.log("model-user --> creatstudentcashflow()  catch error || error :",error.message);
+                await dbutil.rollback(client);
+       }
+}
+
+module.exports.createinstallment=async(Json,newinstallment,clas,scholarno)=>{
+    let sqlQuery=`select cashflow from "user" where scholarno='${scholarno}' and role='student'`
+    let data=[];
+    let sqlQuery2=`update "user" set cashflow=$1 where scholarno='${scholarno}'`
+    let data2=[];
+    let client=await dbutil.getTransaction();
+    try
+    {
+        let result=await dbutil.sqlExecSingleRow(client,sqlQuery,data)
+        if(result.rowCount>0)
+        {
+            let Jsongot=result.rows[0].cashflow;
+            if(Jsongot!=null)
+            {
+                Jsongot[clas][newinstallment]=Json;
+            }
+            console.log(newinstallment)
+            console.log(Jsongot)
+            data2=[Jsongot];
+            let result2=await dbutil.sqlExecSingleRow(client,sqlQuery2,data2)
+            if(result2.rowCount>0)
+            {
+                await dbutil.commit(client);
+            }//if result2
+            else
+            {
+                await dbutil.rollback(client);
+            }//else result2
+            return result2;
+        }
+        return result;
+    }
+    catch(error)
+    {
+        console.log("model-user --> creatinstallment()  catch error || error :",error.message);
+                await dbutil.rollback(client);
+    }
+}
+
+module.exports.removeinstallment=async(scholarno,clas,installment)=>{
+    let sqlQuery=`select cashflow from "user" where scholarno='${scholarno}' and role='student'`;
+    let data=[];
+    let sqlQuery2=`update "user" set cashflow=$1 where scholarno='${scholarno}'`
+    let data2=[];
+    let client=await dbutil.getTransaction();
+    try
+    {
+        let result=await dbutil.sqlExecSingleRow(client,sqlQuery,data)
+        if(result.rowCount>0)
+        {
+            let Jsongot=result.rows[0].cashflow;
+            if(Jsongot!=null)
+            {
+                if(Jsongot[clas][installment]!=null) delete Jsongot[clas][installment];
+            }
+            data2=[Jsongot];
+            let result2=await dbutil.sqlExecSingleRow(client,sqlQuery2,data2);
+            if(result2.rowCount>0)
+            {
+                await dbutil.commit(client);
+            }//if result2
+            else
+            {
+                await dbutil.rollback(client);
+            }//else result2
+
+            return result2;
+        }
+        return result;
+    }
+    catch(error)
+    {
+        console.log("model-user --> removeinstallment()  catch error || error :",error.message);
+                await dbutil.rollback(client);
+    }
+}
+
+
+module.exports.removeyearcashflow=async(scholarno,clas)=>{
+    let sqlQuery=`select cashflow from "user" where scholarno='${scholarno}' and role='student'`
+    let data=[];
+    let sqlQuery2=`update "user" set cashflow=$1 where scholarno='${scholarno}'`
+    let data2=[]
+    let client=await dbutil.getTransaction();
+    try
+    {
+        let result=await dbutil.sqlExecSingleRow(client,sqlQuery,data)
+        if(result.rowCount>0)
+        {
+            let Jsongot=result.rows[0].cashflow;
+            if(Jsongot!=null)
+            {
+                if(Jsongot[clas]!=null) delete Jsongot[clas]
+            }
+            data2=[Jsongot];
+            let result2=await dbutil.sqlExecSingleRow(client,sqlQuery2,data2);
+            if(result2.rowCount>0)
+            {
+                await dbutil.commit(client);
+            }//if result2
+            else
+            {
+                await dbutil.rollback(client);
+            }//else result2
+
+            return result2;
+        }
+        return result;
+    }
+    catch(error)
+    {
+        console.log("model-user --> removeyearcashflow()  catch error || error :",error.message);
+                await dbutil.rollback(client);
+    }
+}
+
+
+
+module.exports.createteachercashflow=async(scholarno,Json,year,month)=>{
+     let sqlQuery=`select cashflow from "user" where scholarno='${scholarno}' and role='master'`
+     let data=[];
+     let sqlQuery2=`update "user" set cashflow=$1 where scholarno='${scholarno}'`
+     let data2=[];
+     let col=`${month}-${year}`
+     let client=await dbutil.getTransaction();
+     try
+     {
+        let result=await dbutil.sqlExecSingleRow(client,sqlQuery,data)
+        if(result.rowCount>0)
+        {
+            let Jsongot=result.rows[0].cashflow;
+            if(Jsongot!=null) Jsongot[col]=Json;
+            else 
+            {
+                let nullJson={
+                    [col]:Json
+                }
+                Jsongot=nullJson;
+            }
+            console.log(Jsongot)
+            data2=[Jsongot];
+            let result2=await dbutil.sqlExecSingleRow(client,sqlQuery2,data2)
+            if(result2.rowCount>0)
+            {
+                await dbutil.commit(client);
+            }//if result2
+            else
+            {
+                await dbutil.rollback(client);
+            }//else result2
+            return result2;
+        }
+        return result;
+     }
+     catch(error)
+     {
+        console.log("model-user --> createteachercashflow()  catch error || error :",error.message);
+        await dbutil.rollback(client);
+     }
+}
+
+module.exports.deleteteachercashflow=async(scholarno,year,month)=>{
+     let sqlQuery=`select cashflow from "user" where scholarno='${scholarno}' and role='master'`
+     let data=[];
+     let sqlQuery2=`update "user" set cashflow=$1 where scholarno='${scholarno}'`
+     let data2=[];
+     let col=`${month}-${year}`
+     let client=await dbutil.getTransaction();
+     try
+     {
+        let result=await dbutil.sqlExecSingleRow(client,sqlQuery,data)
+        if(result.rowCount>0)
+        {
+            let Jsongot=result.rows[0].cashflow;
+            if(Jsongot!=null)
+            {
+                if(Jsongot[col]!=null) delete Jsongot[col]
+            }
+            data2=[Jsongot];
+            let result2=await dbutil.sqlExecSingleRow(client,sqlQuery2,data2)
+            if(result2.rowCount>0)
+            {
+                await dbutil.commit(client);
+            }//if result2
+            else
+            {
+                await dbutil.rollback(client);
+            }//else result2
+            return result2;
+        }
+        return result;
+     }
+     catch(error)
+     {
+        console.log("model-user --> deleteteachercashflow()  catch error || error :",error.message);
+        await dbutil.rollback(client);
+     }
 }

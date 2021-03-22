@@ -19,32 +19,32 @@ module.exports.getuserdetails=async(req,res)=>{
             data:[]
         })
     }
-    // try
-    // {
-    //     let result=await user.getuserdetails(scholarno);
-    //     if(result.rowCount>0)
-    //     {
-    //         return res.status(200).json({
-    //             status:"success",
-    //             statusCode:200,
-    //             message:"user details",
-    //             data:result.rows
-    //         })
-    //     }
-    //     else
-    //     {
-    //         return res.status(200).json({
-    //             status:"error",
-    //             statusCode:400,
-    //             message:"details not found",
-    //             data:[]
-    //         })
-    //     }
-    // }
-    // catch(error)
-    // {
-    //     console.log("user controller --> getuserdetails()  error : ",error)
-    // }
+    try
+    {
+        let result=await user.getuserdetails(scholarno);
+        if(result.rowCount>0)
+        {
+            return res.status(200).json({
+                status:"success",
+                statusCode:200,
+                message:"user details",
+                data:result.rows
+            })
+        }
+        else
+        {
+            return res.status(200).json({
+                status:"error",
+                statusCode:400,
+                message:"details not found",
+                data:[]
+            })
+        }
+    }
+    catch(error)
+    {
+        console.log("user controller --> getuserdetails()  error : ",error)
+    }
 }
 
 
@@ -359,7 +359,10 @@ module.exports.updateteacheryeardetails=async(req,res)=>{
 
 module.exports.addreportcardimage=async(req,res)=>{
 
-    const imgbuffer = await Buffer.from(req.body.imgbuffer, "base64");
+    let buffertostr=JSON.stringify(req.body.imgbuffer)
+    let index=buffertostr.search(',');
+    let concatbuffer=buffertostr.substring(index+1,buffertostr.length);
+    let imgbuffer = await Buffer.from(concatbuffer, "base64");
     let scholarno=req.body.scholarno;
     let clas=req.body.class;
     let roletocheck=req.body.roletocheck;
@@ -596,7 +599,10 @@ module.exports.passwordupdate=async(req,res)=>{
 
 module.exports.addpreviousorgdoc=async(req,res)=>{
 
-        const imgbuffer = await Buffer.from(req.body.imgbuffer, "base64");
+    let buffertostr=JSON.stringify(req.body.imgbuffer)
+    let index=buffertostr.search(',');
+    let concatbuffer=buffertostr.substring(index+1,buffertostr.length);
+    let imgbuffer = await Buffer.from(concatbuffer, "base64");
         let scholarno=req.body.scholarno;
         let roletocheck=req.body.roletocheck;
         if(roletocheck!='master' && roletocheck!='headmaster')
@@ -636,4 +642,296 @@ module.exports.addpreviousorgdoc=async(req,res)=>{
         {
             console.log("contorller user --> addpreviousorgdoc() error : ",error);
         }
+}
+
+
+
+module.exports.createstudentcashflow=async(req,res)=>{
+    
+    try
+    {
+        let scholarno=req.body.scholarno;
+        let roletocheck=req.body.roletocheck;
+
+        let clas=req.body.class;
+        
+        let installment=req.body.installment;
+        let recieptno=req.body.recieptno;
+        let datetoenter=req.body.date;
+        let amount=req.body.amount;
+       
+        let internalJson={
+            recieptno:recieptno,
+            date:datetoenter,
+            amount:amount
+        }
+        let Json={
+            [installment]:internalJson
+        }
+        if(roletocheck!='operator' && roletocheck!='headmaster')
+        {
+            return res.status(200).json({
+                status:"error",
+                statusCode:400,
+                message:"user role not authorised",
+                data:[]
+            })
+        }
+        console.log(Json)
+        const result=await user.createstudentcashflow(Json,scholarno,clas);
+        if(result.rowCount>0)
+        {
+            return res.status(200).json({
+                    status:"success",
+                    statusCode:200,
+                    message:"user created",
+                    data:result
+                })
+        }
+        else
+        {
+            return res.status(200).json({
+                    status:"error",
+                    statusCode:400,
+                    message:"user not created",
+                    data:[]
+                })
+        }
+    }
+    catch(error)
+    {
+        console.log("user controller --> createstudentcasflow()  error : ",error);
+    }
+}
+
+
+module.exports.createinstallment=async(req,res)=>{
+  try
+  {
+    let roletocheck=req.body.roletocheck;
+    let clas=req.body.class;
+    let scholarno=req.body.scholarno;
+    if(roletocheck!='operator' && roletocheck!='headmaster')
+        {
+            return res.status(200).json({
+                status:"error",
+                statusCode:400,
+                message:"user role not authorised",
+                data:[]
+            })
+        }
+    
+    let newinstallment=req.body.installment;
+    let recieptno=req.body.recieptno;
+    let amount=req.body.amount;
+    let datetoenter=req.body.date;
+    let Json={
+        recieptno:recieptno,
+        amount:amount,
+        date:datetoenter
+    }
+    let result=await user.createinstallment(Json,newinstallment,clas,scholarno)
+    if(result.rowCount>0)
+        {
+            return res.status(200).json({
+                    status:"success",
+                    statusCode:200,
+                    message:"installment created",
+                    data:result
+                })
+        }
+        else
+        {
+            return res.status(200).json({
+                    status:"error",
+                    statusCode:400,
+                    message:"installment not created",
+                    data:[]
+                })
+        }
+  }
+  catch(error)
+  {
+        console.log("user controller --> createinstallment()  error : ",error);
+  }
+}
+
+
+module.exports.removeinstallment=async(req,res)=>{
+  try
+  {
+    let roletocheck=req.body.roletocheck;
+    if(roletocheck!='operator' && roletocheck!='headmaster')
+    {
+        return res.status(200).json({
+            status:"error",
+            statusCode:400,
+            message:"user role not authorised",
+            data:[]
+        })
+    }
+    let scholarno=req.body.scholarno;
+    let clas=req.body.class;
+    let installment=req.body.installment;
+    let result=await user.removeinstallment(scholarno,clas,installment);
+    if(result.rowCount>0)
+    {
+        return res.status(200).json({
+                status:"success",
+                statusCode:200,
+                message:"installment created",
+                data:result
+            })
+    }
+    else
+    {
+        return res.status(200).json({
+                status:"error",
+                statusCode:400,
+                message:"installment not created",
+                data:[]
+            })
+    }
+  }
+  catch(error)
+  {
+    console.log("user controller --> removeinstallment()  error : ",error);
+
+  }
+}
+
+
+module.exports.removeyearcashflow=async(req,res)=>{
+    try
+    {
+        let roletocheck=req.body.roletocheck;
+        if(roletocheck!='operator' && roletocheck!='headmaster')
+        {
+            return res.status(200).json({
+                status:"error",
+                statusCode:400,
+                message:"user role not authorised",
+                data:[]
+            })
+        }
+        let scholarno=req.body.scholarno;
+        let clas=req.body.class;
+        let result=await user.removeyearcashflow(scholarno,clas)
+        if(result.rowCount>0)
+        {
+            return res.status(200).json({
+                    status:"success",
+                    statusCode:200,
+                    message:"installment created",
+                    data:result
+                })
+        }
+        else
+        {
+            return res.status(200).json({
+                    status:"error",
+                    statusCode:400,
+                    message:"installment not created",
+                    data:[]
+                })
+        }
+    }
+    catch(error)
+    {
+      console.log("user controller --> removeyearcashflow()  error : ",error);
+    }    
+}
+
+
+
+module.exports.createteachercashflow=async(req,res)=>{
+    try
+    {
+        let roletocheck=req.body.roletocheck;
+        if(roletocheck!='operator' && roletocheck!='headmaster')
+        {
+            return res.status(200).json({
+                status:"error",
+                statusCode:400,
+                message:"user role not authorised",
+                data:[]
+            })
+        }
+        let scholarno=req.body.scholarno;
+        let month=req.body.month;
+        let datetoenter=req.body.date;
+        let amount=req.body.amount;
+        let year=req.body.year;
+        let Json={
+            year:year,
+            date:datetoenter,
+            amount:amount
+        }
+        let result=await user.createteachercashflow(scholarno,Json,year,month)
+        if(result.rowCount>0)
+        {
+            return res.status(200).json({
+                    status:"success",
+                    statusCode:200,
+                    message:"created",
+                    data:result
+                })
+        }
+        else
+        {
+            return res.status(200).json({
+                    status:"error",
+                    statusCode:400,
+                    message:" not created",
+                    data:[]
+                })
+        }
+    }
+    catch(error)
+    {
+        console.log("user controller --> forteachercashflow()  error : ",error)    
+    }
+}
+
+module.exports.deleteteachercashflow=async(req,res)=>{
+    try
+    {
+        let roletocheck=req.body.roletocheck;
+        if(roletocheck!='operator' && roletocheck!='headmaster')
+        {
+            return res.status(200).json({
+                status:"error",
+                statusCode:400,
+                message:"user role not authorised",
+                data:[]
+            })
+        }
+
+        let scholarno=req.body.scholarno;
+        let year=req.body.year;
+        let month=req.body.month;
+        let result=await user.deleteteachercashflow(scholarno,year,month)
+        if(result.rowCount>0)
+        {
+            return res.status(200).json({
+                    status:"success",
+                    statusCode:200,
+                    message:"deleted",
+                    data:result
+                })
+        }
+        else
+        {
+            return res.status(200).json({
+                    status:"error",
+                    statusCode:400,
+                    message:"not deleted",
+                    data:[]
+                })
+        }
+    }
+    catch(error)
+    {
+        console.log("user controller --> deleteteachercashflow()  error : ",error)
+    }
 }

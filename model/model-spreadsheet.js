@@ -2,6 +2,7 @@ const dbutil=require('../dbUtil')
 const { GoogleSpreadsheet } = require('google-spreadsheet');
 
 
+
 module.exports.getstudentspreadsheetdata=async(clas,year,finalstr)=>{
     let sqlQuery=`select ${finalstr} from "user" where role='student' and secondrydata->'${clas}'->>'class'=$1 and secondrydata->'${clas}'->>'year'=$2`;
     let data=[clas,year];
@@ -72,3 +73,131 @@ module.exports.getteacherspreadsheetdata=async(year,finalstr)=>{
     }
 }
 
+
+module.exports.getstudentsfeespreadsheetdata=async(clas,year,finalstr,noofinstallments)=>{
+    let sqlQuery=`select ${finalstr}cashflow from "user" where role='student' and secondrydata->'${clas}'->>'year'=$1`
+    let data=[year]
+    let client =await dbutil.getTransaction();
+    try
+    {
+        let result=await dbutil.sqlExecSingleRow(client,sqlQuery,data)
+        if(result.rowCount>0)
+        {
+            for(let i=0;i<result.rows.length;i++)
+            {
+                result.rows[i]['class']=clas;
+                result.rows[i]['year']=year;
+
+                if(result.rows[i].cashflow!=null)
+                {
+                    for(let j=1;j<=noofinstallments;j++)
+                    {
+                        let colname=`${j}th_installment`
+                        let finalcolname1=`${colname}_amount`
+                        let finalcolname2=`${colname}_recieptno`
+                        let finalcolname3=`${colname}_date`
+                        if(result.rows[i].cashflow[clas]!=undefined)
+                        {
+                            if(result.rows[i].cashflow[clas][j]!=undefined)
+                            {
+                                result.rows[i][finalcolname1]=result.rows[i].cashflow[clas][j].amount;
+                                result.rows[i][finalcolname2]=result.rows[i].cashflow[clas][j].recieptno;
+                                result.rows[i][finalcolname3]=result.rows[i].cashflow[clas][j].date;
+                        
+                            }
+                            else
+                            {
+                                result.rows[i][finalcolname1]='- -'
+                                result.rows[i][finalcolname2]='- -'
+                                result.rows[i][finalcolname3]='- -'
+                            }
+                        }    
+                        else
+                        {
+                            result.rows[i][finalcolname1]='- -'
+                            result.rows[i][finalcolname2]='- -'
+                            result.rows[i][finalcolname3]='- -'
+
+                        }
+                    }
+                }
+                else
+                {
+                    for(let k=1;k<=noofinstallments;k++)
+                    {
+                        let colname=`${k}th_installment`
+                        let finalcolname1=`${colname}_amount`
+                        let finalcolname2=`${colname}_recieptno`
+                        let finalcolname3=`${colname}_date`
+                        result.rows[i][finalcolname1]='- -'
+                        result.rows[i][finalcolname2]='- -'
+                        result.rows[i][finalcolname3]='- -'
+                    }
+                }
+                delete result.rows[i].cashflow;
+            }
+        }
+        //console.log(result)
+        await dbutil.commit(client);
+        return result;
+    }
+    catch(error)
+    {
+        console.log("model spreadsheet ---> getstudentsfeespreadsheetdata() error : ",error)
+        await dbutil.rollback(client)
+    }
+
+}
+
+
+
+module.exports.getteacherssalaryspreadsheeturl=async(month,year,secdata)=>{
+    let sqlQuery=`select ${secdata}cashflow from "user" where role='master' and secondrydata->'${year}'->>'year'=$1`
+    let data=[year];
+    let client =await dbutil.getTransaction();
+    try
+    {
+        let result=await dbutil.sqlExecSingleRow(client,sqlQuery,data)
+        if(result.rowCount>0)
+        {
+            let colname=`${month}-${year}`
+            for(let i=0;i<result.rows.length;i++)
+            {
+                result.rows[i]['year']=year;
+                result.rows[i]['month']=month;
+                
+                if(result.rows[i].cashflow!=null)
+                {
+                    if(result.rows[i].cashflow[colname]!=undefined)
+                    {
+                        
+                        result.rows[i]['amount']=result.rows[i].cashflow[colname].amount;
+                        result.rows[i]['date']=result.rows[i].cashflow[colname].date;
+                        // result.rows[i]['year']=result.rows[i].cashflow[colname].year;
+                    }
+                    else
+                    {
+                        result.rows[i]['amount']='- -';
+                        result.rows[i]['date']='- -';
+                        // result.rows[i]['year']='- -';
+                    }
+                }
+                else
+                {
+                    result.rows[i]['amount']='- -';
+                    result.rows[i]['date']='- -';
+                    //result.rows[i]['year']='- -';
+                }
+                delete result.rows[i].cashflow;
+            }
+        }
+          console.log(result)
+          await dbutil.commit(client);
+        return result;
+    }
+    catch(error)
+    {
+        console.log("model spreadsheet ---> getteacherssalaryspreadsheeturl() error : ",error)
+        await dbutil.rollback(client)
+    }
+}

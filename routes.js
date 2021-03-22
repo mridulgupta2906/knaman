@@ -36,5 +36,18 @@ router.post('/passwordupdate',user.passwordupdate)
 // google spreadsheet approach
 router.post('/getstudentsspreadsheeturl',spreadsheet.getstudentsspreadsheeturl)
 router.post('/getteachersspreadsheeturl',spreadsheet.getteachersspreadsheeturl)
+router.post('/getstudentsfeesspreadsheeturl',spreadsheet.getstudentsfeesspreadsheeturl)
+router.post('/getteacherssalaryspreadsheeturl',spreadsheet.getteacherssalaryspreadsheeturl)
+
+
+router.post('/createstudentcashflow',user.createstudentcashflow)
+router.post('/createinstallment',user.createinstallment)
+router.post('/removeinstallment',user.removeinstallment);
+router.post('/removeyearcashflow',user.removeyearcashflow)
+
+
+/// can be used for create first time or create a particular month data and can also be used for update as it replaces previous data
+router.post('/createteachercashflow',user.createteachercashflow)  
+router.post('/deleteteachercashflow',user.deleteteachercashflow)
 
 module.exports=router;
